@@ -21,11 +21,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class WXBizMsgCryptTest {
-	String encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
-	String token = "pamtest";
-	String timestamp = "1409304348";
-	String nonce = "xxxxxx";
-	String appId = "wxb11529c136998cb6";
+	String encodingAesKey = "6GupYnMlV4Y0KcMaNOIVCK2C1DGFQlDxs3Qj9RpxKte";
+	String token = "Javen";
+	String timestamp = "1484203931";
+	String nonce = "1857811299";
+	String appId = "wx72bcfdf2022a3d93";
 	String replyMsg = "我是中文abcd123";
 	String xmlFormat = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
 	String afterAesEncrypt = "jn1L23DB+6ELqJ+6bruv21Y6MD7KeIfP82D6gU39rmkgczbWwt5+3bnyg5K55bgVtVzd832WzZGMhkP72vVOfg==";
@@ -56,6 +56,7 @@ public class WXBizMsgCryptTest {
 		try {
 			WXBizMsgCrypt pc = new WXBizMsgCrypt(token, encodingAesKey, appId);
 			String afterEncrpt = pc.encryptMsg(replyMsg, timestamp, nonce);
+			
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -70,6 +71,8 @@ public class WXBizMsgCryptTest {
 			String encrypt = nodelist1.item(0).getTextContent();
 			String msgSignature = nodelist2.item(0).getTextContent();
 			String fromXML = String.format(xmlFormat, encrypt);
+			
+			System.out.println("加密后的字段:"+fromXML);
 
 			// 第三方收到公众号平台发送的消息
 			String afterDecrpt = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
@@ -77,6 +80,14 @@ public class WXBizMsgCryptTest {
 		} catch (AesException e) {
 			fail("正常流程，怎么就抛出异常了？？？？？？");
 		}
+	}
+	
+	@Test
+	public void test() throws AesException{
+		WXBizMsgCrypt pc = new WXBizMsgCrypt(token, encodingAesKey, appId);
+		String encrypt = "<xml><ToUserName><![CDATA[gh_4e9f4aaafc15]]></ToUserName><Encrypt><![CDATA[3kQ3d106nSy69DnHW4Qk1uwU1u+brvyw3wnIfr5Xmwa3i8RpWtmfQ7Zcsal5fZCVknThZGVui6OVIcj1pVCcoqKNiMZR30akG04woFLqR0Sd+hNI+2yvRlE2N2irqo+JSPBl5FG2ro56kwtZ0PIH3PlaUbeMr3f4b8GRj8tjdz6uhS/J7s6aa1IifMzpK2d7Nmv72/+m2eRTavVVu+q3B1ByIWbENSkudnIYQN6CGuwhNP+/gjlwF1E7Vjyj3CYq/rnfHvaZrXFo4uJ6f8rTl12uVogNFQJhL0DPawIdDPYzSRDZV46iT4/xqe/zJL3f4Ef/H87WpDUv+bY/1JtJMQ4T1t/IPOIDZ67FZQdEv0Fp4r6iV1JgMiiA3ropGisU8Hf8o5phNACSqDo7934bgbvCPiq1vXjcpZYGmMb+kyM=]]></Encrypt></xml>";
+		String afterDecrpt = pc.decryptMsg("0c2a5c195a71fff8a12d6491b801af30767f12f2", timestamp, nonce, encrypt);
+		System.out.println(afterDecrpt);
 	}
 
 	@Test
